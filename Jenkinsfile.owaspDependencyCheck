@@ -1,0 +1,34 @@
+owaspDependencyCheckPipeline {
+    // Specify the JDK version to use for running the Jenkins pipeline
+    useJDK11 = true
+
+    // Choose the plugin to use for OWASP Dependency Check
+    // Options: "maven" or "jenkins"
+    owaspPlugin = "jenkins"
+
+    /*************************************************************************
+     * Vulnerability Thresholds for Unstable Builds
+     *************************************************************************/
+    // Define thresholds for marking the build as unstable based on the number of vulnerabilities
+    unstableTotalCritical = 1
+    unstableTotalHigh = 1
+    unstableTotalMedium = 1
+    unstableTotalLow = 1
+
+    /*************************************************************************
+     * (Commented Out) Vulnerability Thresholds for Failing Builds
+     *************************************************************************/
+    // Define thresholds for failing the build based on the number of vulnerabilities
+    // Uncomment and set values if you want to make the build fail on exceeding these thresholds
+    // failedTotalCritical = 1
+    // failedTotalHigh = 1
+    // failedTotalMedium = 1
+    // failedTotalLow = 1
+
+    /*************************************************************************
+     * (Commented Out) Command Line Arguments for OWASP Dependency Check
+     *************************************************************************/
+    // Provide additional command line arguments for the OWASP Dependency Check tool
+    // Uncomment and modify the line below to include arguments such as suppression files
+    // owaspArgs = "--suppression ./owasp-suppression.xml"
+}

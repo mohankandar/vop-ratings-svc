@@ -1,0 +1,5 @@
+mavenPerformancePipeline {
+    perfTestUrl = 'http://bip-ratings-svc-dev.ratingssvc-dev:8080'
+    perfOpts = '-DjMeterTestFile=RatingsSvcServicePerformanceTestPlan.jmx'
+    useJDK11 = true
+}

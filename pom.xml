@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.wynd.vop.framework</groupId>
+		<artifactId>vop-framework-parentpom</artifactId>
+		<version>1.0.0</version>
+		<relativePath />
+	</parent>
+
+	<groupId>com.wynd.vop.ratingssvc</groupId>
+	<artifactId>bip-ratings-svc-reactor</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>${project.artifactId}</name>
+	<description>Reactor POM for VOP RatingsSvc Service</description>
+
+	<modules>
+		<module>bip-ratings-svc</module>
+	</modules>
+
+	<repositories>
+		<repository>
+			<id>nexus3</id>
+			<name>VOP Nexus Repository</name>
+			<url>https://nexus.dev.bip.va.gov/repository/maven-public</url>
+	  	</repository>
+	</repositories>
+	
+	<properties>
+		<!-- intentionally using old ant-contrib because newer version doesn't work with maven-antrun-plugin -->
+		<ant-contrib.version>20020829</ant-contrib.version>
+		<!-- the maven phase to bind fortify-sca -->
+		<fortify.bind.phase>verify</fortify.bind.phase>
+		<fortify-merge-input-filepath>${project.basedir}/${project.artifactId}.fpr</fortify-merge-input-filepath>
+		<fortify-merge-output-filepath>${project.basedir}/${project.artifactId}.fpr</fortify-merge-output-filepath>
+		<!-- exclude example sources from sonar scans -->
+		<!-- these exclusions can be removed once these sample classes are no longer needed -->
+		<sonar.exclusions>**/SampleData1.java, **/SampleData2.java, **/PartnerHelper.java, **/SampleByPidDomainToPartner.java, **/SampleByPidPartnerToDomain.java</sonar.exclusions>
+        <java.version>11</java.version>
+        <sonar.java.source>${java.version}</sonar.java.source>
+	</properties>
+	
+	<profiles>
+		<profile>
+			<id>dependency-check</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.owasp</groupId>
+						<artifactId>dependency-check-maven</artifactId>
+						<version>6.5.0</version>
+						<configuration>
+							<formats>HTML,XML</formats>
+							<!--<mavenSettingsProxyId>httpsproxy</mavenSettingsProxyId>-->
+							<suppressionFile>./owasp-suppression.xml</suppressionFile>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>check</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!--
+			The fortify-sca profile runs the aggregate scan for all modules.
+			If a project team believes that the fortify-sca profile requires ANY changes,
+			please consult with the VOP Framework development team.
+			Base Fortify requirements for all project modules are declared in bip-framework-parentpom.
+		-->
+		<profile>
+			<id>fortify-sca</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<!-- Don't run tests from SCA - profile should be run as: "mvn install -P fortify-sca" -->
+				<skipTests>true</skipTests>
+				<skipITs>true</skipITs>
+				<skipPerfTests>true</skipPerfTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>com.fortify.sca.plugins.maven</groupId>
+						<artifactId>sca-maven-plugin</artifactId>
+						<version>${sca-maven-plugin.version}</version>
+                        <configuration>
+                            <source>${java.version}</source>
+                        </configuration>
+						<executions>
+							<execution>
+								<id>fortify-sca-clean</id>
+								<phase>${fortify.bind.phase}</phase>
+								<goals>
+									<goal>clean</goal>
+								</goals>
+								<configuration>
+									<aggregate>true</aggregate>
+								</configuration>
+							</execution>
+							<execution>
+								<id>fortify-sca-translate</id>
+								<phase>${fortify.bind.phase}</phase>
+								<goals>
+									<goal>translate</goal>
+								</goals>
+								<configuration>
+									<!-- run scans against all reactor projects -->
+									<aggregate>true</aggregate>
+									<!-- exclude inttest and perftest, as they don't go to prod -->
+									<excludes>${user.dir}/bip-ratings-svc-inttest,${user.dir}/bip-ratings-svc-perftest</excludes>
+								</configuration>
+							</execution>
+							<execution>
+								<id>fortify-sca-scan</id>
+								<phase>${fortify.bind.phase}</phase>
+								<goals>
+									<goal>scan</goal>
+								</goals>
+								<configuration>
+									<!-- run scans against all reactor projects -->
+									<aggregate>true</aggregate>
+									<!-- exclude inttest and perftest, as they don't go to prod -->
+									<excludes>${user.dir}/bip-ratings-svc-inttest,${user.dir}/bip-ratings-svc-perftest</excludes>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>fortify-merge</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<!-- Don't run tests from SCA - profile should be run as: "mvn install -Pfortify-merge" -->
+				<skipTests>true</skipTests>
+				<skipITs>true</skipITs>
+				<skipPerfTests>true</skipPerfTests>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<!-- do not run on child modules, just on reactor -->
+						<inherited>false</inherited>
+						<dependencies>
+							<!-- provides ANT branch tags (if/then/else) -->
+							<dependency>
+								<groupId>ant-contrib</groupId>
+								<artifactId>ant-contrib</artifactId>
+								<version>${ant-contrib.version}</version>
+							</dependency>
+						</dependencies>
+						<executions>
+							<execution>
+								<id>fortify-merge</id>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<!-- add the ant tasks from ant-contrib -->
+										<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+											<classpath refid="maven.dependency.classpath"/>
+										</taskdef>
+										<echo>+++ Executing ANT target for Fortify copy/merge</echo>
+										<echo>+++ Checking file availability of ${fortify-merge-input-filepath}</echo>
+										<if>
+											<available file="${fortify-merge-input-filepath}"/>
+											<then>
+												<echo>+++ Found file: ${fortify-merge-input-filepath}</echo>
+												<echo>+++ Executing Fortify merge operation with:</echo>
+												<echo>      FPRUtility -merge</echo>
+												<echo>        -project ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr</echo>
+												<echo>        -source ${fortify-merge-input-filepath}</echo>
+												<echo>        -f ${fortify-merge-output-filepath}</echo>
+												<exec executable="FPRUtility">
+													<arg line="-merge -project ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr -source ${fortify-merge-input-filepath} -f ${fortify-merge-output-filepath}"/>
+												</exec>
+											</then>
+											<else>
+												<echo>+++ Not-found file: ${fortify-merge-input-filepath}</echo>
+												<echo>+++ Executing file copy with:</echo>
+												<echo>      copy</echo>
+												<echo>        ${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr</echo>
+												<echo>        ${fortify-merge-output-filepath}</echo>
+												<copy file="${project.build.directory}/fortify/${project.artifactId}-${project.version}.fpr" tofile="${fortify-merge-output-filepath}"/>
+											</else>
+										</if>
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
