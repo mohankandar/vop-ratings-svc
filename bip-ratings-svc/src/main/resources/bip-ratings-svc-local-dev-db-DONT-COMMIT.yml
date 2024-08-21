@@ -1,0 +1,30 @@
+spring.profiles.include: local
+
+bip-ratings-svc:
+  db:
+    datasource:
+      ratings:
+        instance.name: ratings
+        type: com.zaxxer.hikari.HikariDataSource
+        initialization-mode: never
+        driver-class-name: oracle.jdbc.OracleDriver
+        url: jdbc:oracle:thin:@localhost:7510:d1fnet
+        hikari:
+          connection-timeout: 4000
+          maxLifetime: 50000
+          minimum-idle: 4
+          maximum-pool-size: 14
+          idle-timeout: 40000
+          username: mkathiravan
+          password: VetAffa*User!0804
+
+    jpa:
+      database: ORACLE
+      generate-ddl: false
+      show-sql: true
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.Oracle12cDialect
+          format_sql: true
+          physical_naming_strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+          ddl-auto: none

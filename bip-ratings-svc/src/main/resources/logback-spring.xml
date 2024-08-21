@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration scan="false" debug="true">
+	<!-- Resource is available in shared auto-configure included via pom.xml dependency -->
+	<include resource="com/wynd/vop/framework/starter/logger/bip-framework-logback-starter.xml" />
+
+	<appender name="VOP_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="VOP_FRAMEWORK_ASYNC_CONSOLE_APPENDER" />
+		<!-- Additional Log Masking Filters -->
+		<filter class="ch.qos.logback.core.filter.EvaluatorFilter">
+			<evaluator class="com.wynd.vop.framework.log.logback.BipMaskingFilter">
+				<name>Date</name>
+				<pattern>\b\d{4}-\d{1,2}-\d{1,2}\b</pattern>
+				<unmasked>2</unmasked>
+			</evaluator>
+		</filter>
+	</appender>
+
+	<root level="INFO">
+		<!-- To test async/json logging locally, force the use of VOP_ASYNC appender -->
+		<if condition='"local-int,ci,dev,stage,prod".contains("${spring.profiles.active}")'>
+			<then>
+ 				<appender-ref ref="VOP_ASYNC" />
+			</then>
+			<else>
+				<appender-ref ref="CONSOLE" />
+			</else>
+		</if>
+	</root>
+</configuration>
