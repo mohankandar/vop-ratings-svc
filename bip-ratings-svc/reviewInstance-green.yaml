@@ -1,0 +1,12 @@
+########################################################################
+# Overrides for new EKS 1.22 (green) environment
+########################################################################
+
+image:
+  repository: container-registry.dev.bip.va.gov/vbms-ratings/bip-ratings-svc
+opaImage:
+  repository: container-registry.dev.bip.va.gov/openpolicyagent/opa
+vault:
+  host: "vault.vault"
+consul:
+  host: dev-consul-helm-server.vault

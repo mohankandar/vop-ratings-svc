@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.wynd.vop.ratingssvc</groupId>
+		<artifactId>bip-ratings-svc-reactor</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+
+	<artifactId>bip-ratings-svc</artifactId>
+	<packaging>jar</packaging>
+	<name>${project.artifactId}</name>
+	<description>RatingsSvc Service Implementation for VOP Project</description>
+
+	<properties>
+		<vop-framework.version>1.0.0</vop-framework.version>
+		<domain>localhost</domain>
+		<port>8080</port>
+		<protocol>http</protocol>
+		<Health.threadGroup.threads>5</Health.threadGroup.threads>
+		<Health.threadGroup.rampUp>2</Health.threadGroup.rampUp>
+		<Health.threadGroup.loopCount>10</Health.threadGroup.loopCount>
+		<Health.threadGroup.duration>200</Health.threadGroup.duration>
+		<Health.threadGroup.startUpDelay>5</Health.threadGroup.startUpDelay>
+		<SampleInfo.threadGroup.threads>5</SampleInfo.threadGroup.threads>
+		<SampleInfo.threadGroup.rampUp>2</SampleInfo.threadGroup.rampUp>
+		<SampleInfo.threadGroup.loopCount>10</SampleInfo.threadGroup.loopCount>
+		<SampleInfo.threadGroup.duration>200</SampleInfo.threadGroup.duration>
+		<SampleInfo.threadGroup.startUpDelay>5</SampleInfo.threadGroup.startUpDelay>
+		<SampleInfoNoRecordFound.threadGroup.threads>5</SampleInfoNoRecordFound.threadGroup.threads>
+		<SampleInfoNoRecordFound.threadGroup.rampUp>2</SampleInfoNoRecordFound.threadGroup.rampUp>
+		<SampleInfoNoRecordFound.threadGroup.loopCount>10</SampleInfoNoRecordFound.threadGroup.loopCount>
+		<SampleInfoNoRecordFound.threadGroup.duration>200</SampleInfoNoRecordFound.threadGroup.duration>
+		<SampleInfoNoRecordFound.threadGroup.startUpDelay>5</SampleInfoNoRecordFound.threadGroup.startUpDelay>
+		<SampleInfoInvalidPid.threadGroup.threads>5</SampleInfoInvalidPid.threadGroup.threads>
+		<SampleInfoInvalidPid.threadGroup.rampUp>2</SampleInfoInvalidPid.threadGroup.rampUp>
+		<SampleInfoInvalidPid.threadGroup.loopCount>10</SampleInfoInvalidPid.threadGroup.loopCount>
+		<SampleInfoInvalidPid.threadGroup.duration>200</SampleInfoInvalidPid.threadGroup.duration>
+		<SampleInfoInvalidPid.threadGroup.startUpDelay>5</SampleInfoInvalidPid.threadGroup.startUpDelay>
+		<SampleInfoNullPid.threadGroup.threads>5</SampleInfoNullPid.threadGroup.threads>
+		<SampleInfoNullPid.threadGroup.rampUp>2</SampleInfoNullPid.threadGroup.rampUp>
+		<SampleInfoNullPid.threadGroup.loopCount>10</SampleInfoNullPid.threadGroup.loopCount>
+		<SampleInfoNullPid.threadGroup.duration>200</SampleInfoNullPid.threadGroup.duration>
+		<SampleInfoNullPid.threadGroup.startUpDelay>5</SampleInfoNullPid.threadGroup.startUpDelay>
+		<BearerTokenCreate.threadGroup.threads>5</BearerTokenCreate.threadGroup.threads>
+		<BearerTokenCreate.threadGroup.rampUp>1</BearerTokenCreate.threadGroup.rampUp>
+		<BearerTokenCreate.threadGroup.loopCount>1</BearerTokenCreate.threadGroup.loopCount>
+	</properties>
+
+	<dependencies>
+		<!--
+			Add Partner Client project refs here
+			EXAMPLE:
+			<dependency>
+				<groupId>com.wynd.vop.ratingssvc.reference.person</groupId>
+				<artifactId>bip-reference-partner-person</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		-->
+		<!-- framework dependencies -->
+		<dependency>
+			<groupId>com.wynd.vop.framework</groupId>
+			<artifactId>vop-framework-libraries</artifactId>
+			<version>${vop-framework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.wynd.vop.framework</groupId>
+			<artifactId>vop-framework-autoconfigure</artifactId>
+			<version>${vop-framework.version}</version>
+		</dependency>
+		<!-- spring-boot dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+		 <groupId>org.springframework.cloud</groupId>
+		 <artifactId>spring-cloud-starter-bootstrap</artifactId>
+		 <exclusions>
+			 <exclusion>
+				 <groupId>org.bouncycastle</groupId>
+				 <artifactId>bcprov-jdk15on</artifactId>
+			 </exclusion>
+		 </exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+		<!-- spring cloud dependencies -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-sleuth</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-vault-config-consul</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-config</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-consul</artifactId>
+		</dependency>
+		<dependency>
+		  <groupId>org.springframework.cloud</groupId>
+		  <artifactId>spring-cloud-starter-consul-discovery</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.logstash.logback</groupId>
+			<artifactId>logstash-logback-encoder</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.janino/janino -->
+		<dependency>
+			<groupId>org.codehaus.janino</groupId>
+			<artifactId>janino</artifactId>
+		</dependency>
+		<!-- additional jackson dependencies not brought in via spring-boot starters -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-base</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jaxb-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>openapi-generator</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.activation</groupId>
+					<artifactId>activation</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.github.fge</groupId>
+					<artifactId>jackson-coreutils</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.swagger.core.v3</groupId>
+					<artifactId>swagger-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>joda-time</groupId>
+					<artifactId>joda-time</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.swagger</groupId>
+					<artifactId>swagger-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.code.findbugs</groupId>
+					<artifactId>jsr305</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- jolokia for JMX over HTTP via /jolokia -->
+		<dependency>
+			<groupId>org.jolokia</groupId>
+			<artifactId>jolokia-core</artifactId>
+		</dependency>
+
+		<!-- misc dependencies -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
+		<!-- test dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.junit.vintage</groupId>
+		    <artifactId>junit-vintage-engine</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.wynd.vop.framework</groupId>
+			<artifactId>vop-framework-test-lib</artifactId>
+			<version>${vop-framework.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<!--
+					Meta-information about the web application.
+					
+					The templating maven plugin handles generating and copying files from
+					a source to a given output directory, while filtering them.
+					This plugin is useful to filter Java Source Code as there is a need
+					to have things in the code replaced with properties values.
+					Generates class to store project.* properties in the ApplicationInfo.java
+					placed under <sourceDirectory>
+					This mojo helps adding a filtered source folder in one go. This is
+					useful as we want to use properties coming from the POM inside
+					parts of our source code that requires real constants
+
+					See ApplicationInfo.java in src/java-template directory
+				-->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>templating-maven-plugin</artifactId>
+				<version>${templating-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>filtering-java-templates</id>
+						<goals>
+							<goal>filter-sources</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>${basedir}/src/main/java-template</sourceDirectory>
+							<outputDirectory>${project.build.directory}/generated-sources/java-template</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<!-- Generate the source java file described by the templating-maven-plugin above -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/java-template</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+        <profile>
+            <id>inttest</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>net.masterthought</groupId>
+                        <artifactId>maven-cucumber-reporting</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+		<!-- OpenAPI Specification (OAS) Code generation profile. In the framework
+			parent pom see profile with id: org-openapitools-codegen-parent There are
+			multiple plugins in the parent POM for swagger UI download, generate. The
+			<exists> section below has to match the one from parent pom for the build
+			phases and goals to execute for openapi code and swagger ui generation to
+			work -->
+		<profile>
+			<id>org-openapitools-codegen-ratingssvc</id>
+			<activation>
+				<file>
+					<!-- Existence of API YML file to activate the profile. DO NOT
+						MODIFY LOCATION AND FILE NAME AS FRAMEWORK USES THE SAME FOR ACTIVATION,
+						SPEC GENERATE -->
+					<exists>${basedir}/src/main/resources/openapi/openapi.yml</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<!-- activate the openapi-generator-maven-plugin -->
+					<plugin>
+						<groupId>org.openapitools</groupId>
+						<artifactId>openapi-generator-maven-plugin</artifactId>
+						<version>${openapi.codegen.version}</version>
+						<executions>
+							<execution>
+								<id>generate-openapi-ratingssvc</id>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<configuration>
+									<!-- See https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator-maven-plugin -->
+									<inputSpec>${basedir}/src/main/resources/openapi/openapi.yml</inputSpec>
+									<output>${project.build.directory}/generated-sources</output>
+									<ignoreFileOverride>${basedir}/.openapi-generator-ignore</ignoreFileOverride>
+
+									<apiPackage>com.wynd.vop.ratingssvc.api</apiPackage>
+									<modelPackage>com.wynd.vop.ratingssvc.api.model.v1</modelPackage>
+									<importMappings>
+										ProviderResponse=com.wynd.vop.framework.rest.provider.ProviderResponse,
+										ProviderRequest=com.wynd.vop.framework.rest.provider.ProviderRequest,
+										Message=com.wynd.vop.framework.rest.provider.Message,
+										Person=com.wynd.vop.framework.security.model.Person,
+										ProviderTransferObjectMarker=com.wynd.vop.framework.transfer.ProviderTransferObjectMarker
+									</importMappings>
+
+									<addCompileSourceRoot>false</addCompileSourceRoot>
+									<configHelp>false</configHelp>
+									<verbose>false</verbose>
+									<generatorName>spring</generatorName>
+									<generateApiDocumentation>false</generateApiDocumentation>
+									<generateApiTests>false</generateApiTests>
+									<generateApis>true</generateApis>
+									<generateModels>true</generateModels>
+									<generateModelTests>false</generateModelTests>
+									<generateModelDocumentation>false</generateModelDocumentation>
+									<generateSupportingFiles>false</generateSupportingFiles>
+									<languageSpecificPrimitives>true</languageSpecificPrimitives>
+									<templateDirectory>${basedir}/src/main/resources/openapi/mustache</templateDirectory>
+
+									<configOptions>
+										<serializableModel>true</serializableModel>
+										<sourceFolder>openapi</sourceFolder>
+										<interfaceOnly>true</interfaceOnly>
+										<implicitHeaders>false</implicitHeaders>
+										<java8>false</java8>
+										<useBeanValidation>true</useBeanValidation>
+										<performBeanValidation>true</performBeanValidation>
+										<useTags>true</useTags>
+										<swaggerDocketConfig>false</swaggerDocketConfig>
+									</configOptions>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+				<!-- the following is only necessary if you are using eclipse, STS and
+					m2e -->
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>org.openapitools</groupId>
+												<artifactId>openapi-generator-maven-plugin</artifactId>
+												<versionRange>[${openapi.codegen.version},)</versionRange>
+												<goals>
+													<goal>generate</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<execute />
+											</action>
+										</pluginExecution>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>com.google.code.maven-replacer-plugin</groupId>
+												<artifactId>replacer</artifactId>
+												<versionRange>[${google.codereplacer.version},)</versionRange>
+												<goals>
+													<goal>replace</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<execute />
+											</action>
+										</pluginExecution>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>org.apache.maven.plugins</groupId>
+												<artifactId>maven-antrun-plugin</artifactId>
+												<versionRange>[${maven-antrun-plugin.version},)</versionRange>
+												<goals>
+													<goal>run</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<execute />
+											</action>
+										</pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+		<profile>
+			<id>perftest</id>
+			<build>
+				<plugins>
+					<!-- JMeter Maven Plugin to set performance test -D parameters-->
+					<plugin>
+						<groupId>com.lazerycode.jmeter</groupId>
+						<artifactId>jmeter-maven-plugin</artifactId>
+						<configuration>
+							<skip>${skipPerfTests}</skip>
+						</configuration>
+						<executions>
+							<execution>
+								<id>jmeter-configuration</id>
+								<goals>
+									<goal>configure</goal>
+								</goals>
+								<configuration>
+									<propertiesUser>
+										<baseurl>${domain}</baseurl>
+										<domain>${domain}</domain>
+										<port>${port}</port>
+										<protocol>${protocol}</protocol>
+										<Health.threadGroup.threads>${Health.threadGroup.threads}</Health.threadGroup.threads>
+										<Health.threadGroup.rampUp>${Health.threadGroup.rampUp}</Health.threadGroup.rampUp>
+										<Health.threadGroup.loopCount>${Health.threadGroup.loopCount}</Health.threadGroup.loopCount>
+										<Health.threadGroup.duration>${Health.threadGroup.duration}</Health.threadGroup.duration>
+										<Health.threadGroup.startUpDelay>${Health.threadGroup.startUpDelay}</Health.threadGroup.startUpDelay>
+										<SampleInfo.threadGroup.threads>${SampleInfo.threadGroup.threads}</SampleInfo.threadGroup.threads>
+										<SampleInfo.threadGroup.rampUp>${SampleInfo.threadGroup.rampUp}</SampleInfo.threadGroup.rampUp>
+										<SampleInfo.threadGroup.loopCount>${SampleInfo.threadGroup.loopCount}</SampleInfo.threadGroup.loopCount>
+										<SampleInfo.threadGroup.duration>${SampleInfo.threadGroup.duration}</SampleInfo.threadGroup.duration>
+										<SampleInfo.threadGroup.startUpDelay>${SampleInfo.threadGroup.startUpDelay}</SampleInfo.threadGroup.startUpDelay>
+										<SampleInfoNoRecordFound.threadGroup.threads>${SampleInfoNoRecordFound.threadGroup.threads}</SampleInfoNoRecordFound.threadGroup.threads>
+										<SampleInfoNoRecordFound.threadGroup.rampUp>${SampleInfoNoRecordFound.threadGroup.rampUp}</SampleInfoNoRecordFound.threadGroup.rampUp>
+										<SampleInfoNoRecordFound.threadGroup.loopCount>${SampleInfoNoRecordFound.threadGroup.loopCount}</SampleInfoNoRecordFound.threadGroup.loopCount>
+										<SampleInfoNoRecordFound.threadGroup.duration>${SampleInfoNoRecordFound.threadGroup.duration}</SampleInfoNoRecordFound.threadGroup.duration>
+										<SampleInfoNoRecordFound.threadGroup.startUpDelay>${SampleInfoNoRecordFound.threadGroup.startUpDelay}</SampleInfoNoRecordFound.threadGroup.startUpDelay>
+										<SampleInfoInvalidPid.threadGroup.threads>${SampleInfoInvalidPid.threadGroup.threads}</SampleInfoInvalidPid.threadGroup.threads>
+										<SampleInfoInvalidPid.threadGroup.rampUp>${SampleInfoInvalidPid.threadGroup.rampUp}</SampleInfoInvalidPid.threadGroup.rampUp>
+										<SampleInfoInvalidPid.threadGroup.loopCount>${SampleInfoInvalidPid.threadGroup.loopCount}</SampleInfoInvalidPid.threadGroup.loopCount>
+										<SampleInfoInvalidPid.threadGroup.duration>${SampleInfoInvalidPid.threadGroup.duration}</SampleInfoInvalidPid.threadGroup.duration>
+										<SampleInfoInvalidPid.threadGroup.startUpDelay>${SampleInfoInvalidPid.threadGroup.startUpDelay}</SampleInfoInvalidPid.threadGroup.startUpDelay>
+										<SampleInfoNullPid.threadGroup.threads>${SampleInfoNullPid.threadGroup.threads}</SampleInfoNullPid.threadGroup.threads>
+										<SampleInfoNullPid.threadGroup.rampUp>${SampleInfoNullPid.threadGroup.rampUp}</SampleInfoNullPid.threadGroup.rampUp>
+										<SampleInfoNullPid.threadGroup.loopCount>${SampleInfoNullPid.threadGroup.loopCount}</SampleInfoNullPid.threadGroup.loopCount>
+										<SampleInfoNullPid.threadGroup.duration>${SampleInfoNullPid.threadGroup.duration}</SampleInfoNullPid.threadGroup.duration>
+										<SampleInfoNullPid.threadGroup.startUpDelay>${SampleInfoNullPid.threadGroup.startUpDelay}</SampleInfoNullPid.threadGroup.startUpDelay>
+										<BearerTokenCreate.threadGroup.threads>${BearerTokenCreate.threadGroup.threads}</BearerTokenCreate.threadGroup.threads>
+										<BearerTokenCreate.threadGroup.rampUp>${BearerTokenCreate.threadGroup.rampUp}</BearerTokenCreate.threadGroup.rampUp>
+										<BearerTokenCreate.threadGroup.loopCount>${BearerTokenCreate.threadGroup.loopCount}</BearerTokenCreate.threadGroup.loopCount>
+									</propertiesUser>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+				<pluginManagement>
+					<plugins>
+						<!--This plugin's configuration is used to store Eclipse m2e settings
+							only. It has no influence on the Maven build itself. -->
+						<plugin>
+							<groupId>org.eclipse.m2e</groupId>
+							<artifactId>lifecycle-mapping</artifactId>
+							<version>${lifecycle.mapping.version}</version>
+							<configuration>
+								<lifecycleMappingMetadata>
+									<pluginExecutions>
+										<pluginExecution>
+											<pluginExecutionFilter>
+												<groupId>com.lazerycode.jmeter</groupId>
+												<artifactId>jmeter-maven-plugin</artifactId>
+												<versionRange>${jmeter-maven-plugin.versionRange}</versionRange>
+												<goals>
+													<goal>configure</goal>
+												</goals>
+											</pluginExecutionFilter>
+											<action>
+												<ignore></ignore>
+											</action>
+										</pluginExecution>
+									</pluginExecutions>
+								</lifecycleMappingMetadata>
+							</configuration>
+						</plugin>
+					</plugins>
+				</pluginManagement>
+			</build>
+		</profile>
+	</profiles>
+</project>
